@@ -350,7 +350,7 @@
         }
     }
 
-    function onScanSuccess(decodedText, decodedResult) {
+ function onScanSuccess(decodedText, decodedResult) {
         // Hentikan kamera segera setelah barcode terbaca
         tutupScanner();
         
@@ -358,29 +358,40 @@
         if (navigator.vibrate) navigator.vibrate(100);
 
         if (scannerMode === 'gudang') {
-            // Memasukkan hasil scan ke kolom Barcode di form Gudang
             document.getElementById('barcodeBarang').value = decodedText;
         } 
         else if (scannerMode === 'kasir') {
-            // Mencari barang di database gudang berdasarkan barcode
+            // Mencari barang di database berdasarkan barcode
             let indexGudang = daftarBarang.findIndex(b => b.barcode === decodedText);
             
             if (indexGudang !== -1) {
-                // Barang ditemukan, otomatis masukkan ke keranjang sejumlah 1
                 let bg = daftarBarang[indexGudang];
-                if (bg.stok < 1) return alert(`Stok ${bg.nama} habis!`);
                 
+                // Cari apakah barang ini SUDAH ADA di keranjang?
                 let itemAda = keranjangBelanja.find(item => item.indexGudang === indexGudang);
+                
                 if (itemAda) {
-                    if ((itemAda.jumlah + 1) > bg.stok) return alert(`Total di keranjang melebihi stok gudang!`);
-                    itemAda.jumlah += 1;
-                    itemAda.subtotal = itemAda.jumlah * itemAda.harga;
+                    // JIKA ADA: Tambah jumlahnya saja (+1)
+                    if ((itemAda.jumlah + 1) > bg.stok) {
+                        alert(`Stok ${bg.nama} tidak mencukupi!`);
+                    } else {
+                        itemAda.jumlah += 1;
+                        itemAda.subtotal = itemAda.jumlah * itemAda.harga;
+                    }
                 } else {
-                    keranjangBelanja.push({ indexGudang: indexGudang, nama: bg.nama, harga: bg.harga, jumlah: 1, subtotal: bg.harga });
+                    // JIKA BELUM ADA: Masukkan barang baru
+                    if (bg.stok < 1) return alert(`Stok ${bg.nama} habis!`);
+                    keranjangBelanja.push({ 
+                        indexGudang: indexGudang, 
+                        nama: bg.nama, 
+                        harga: bg.harga, 
+                        jumlah: 1, 
+                        subtotal: bg.harga 
+                    });
                 }
                 perbaruiTampilan();
             } else {
-                alert(`Barcode [${decodedText}] belum terdaftar di Gudang! Daftarkan dulu di menu Gudang.`);
+                alert(`Barcode [${decodedText}] belum terdaftar di Gudang!`);
             }
         }
     }
