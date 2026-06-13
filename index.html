@@ -11,6 +11,7 @@
     <title>kasir</title>
     <link rel="manifest" href="./manifest.json">
     <link rel="apple-touch-icon" href="./unnamed.png">
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
@@ -38,8 +39,6 @@
         #reader video { object-fit: cover; }
         
         .input-qty-keranjang { width: 40px; text-align: center; font-size: 12px; padding: 2px; }
-        
-        /* Gaya khusus tampilan gambar QRIS popup */
         .qris-display-box { text-align: center; background: white; padding: 10px; border-radius: 8px; border: 2px solid #dee2e6; margin-top: 10px; }
         .qris-img-render { max-width: 180px; height: auto; margin: 0 auto; }
     </style>
@@ -51,16 +50,9 @@
         <img id="loginLogo" src="" class="logo-login d-none" alt="Logo Toko">
         <h2 id="loginTitle" class="fw-bold text-primary mb-1">LOKAL CAFFEE</h2>
         <p class="text-muted mb-4 small">Sistem Kasir Terpadu</p>
-        
         <form id="formLogin" onsubmit="prosesLogin(event)">
-            <div class="mb-3 text-start">
-                <label class="small fw-bold text-secondary">ID Pengguna</label>
-                <input type="text" id="inputId" class="form-control form-control-lg fw-bold" placeholder="Contoh: admin" required autocomplete="off">
-            </div>
-            <div class="mb-4 text-start">
-                <label class="small fw-bold text-secondary">Password / PIN</label>
-                <input type="password" id="inputPin" class="form-control form-control-lg fw-bold" placeholder="Masukkan Sandi" required autocomplete="off">
-            </div>
+            <div class="mb-3 text-start"><label class="small fw-bold text-secondary">ID Pengguna</label><input type="text" id="inputId" class="form-control form-control-lg fw-bold" required autocomplete="off"></div>
+            <div class="mb-4 text-start"><label class="small fw-bold text-secondary">Password / PIN</label><input type="password" id="inputPin" class="form-control form-control-lg fw-bold" required autocomplete="off"></div>
             <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold shadow-sm">MASUK KASIR</button>
             <p id="pesanErrorLogin" class="text-danger small mt-3 d-none fw-bold">❌ ID atau Password Salah!</p>
         </form>
@@ -72,33 +64,17 @@
         <h3 id="headerTitle" class="text-primary fw-bold mb-0 d-flex align-items-center" style="font-size: 18px;">☕ LOKAL CAFFEE</h3>
         <div class="text-end d-flex align-items-center justify-content-end">
             <span id="namaKasirAktif" class="badge bg-secondary fs-6 me-2 d-none d-md-inline">Kasir: -</span>
-            <button id="btnHubungkanBluetooth" class="btn btn-sm btn-info fw-bold text-white me-2" onclick="hubungkanPrinter()">🔌 Printer</button>
+            <button class="btn btn-sm btn-info fw-bold text-white me-2" onclick="hubungkanPrinter()">🔌 Printer</button>
             <button id="btnAturAkun" class="btn btn-sm btn-warning fw-bold text-dark me-2 d-none" data-bs-toggle="modal" data-bs-target="#modalAturAkun">⚙️ Config</button>
             <button class="btn btn-sm btn-danger fw-bold" onclick="keluarKasir()">Keluar</button>
         </div>
     </div>
 
     <div class="row mb-2">
-        <div class="col-6 col-md-3 mb-3">
-            <div class="stat-card bg-primary text-white">
-                <div class="stat-title">📦 Aset Gudang</div><div id="totalAset" class="stat-value">Rp 0</div>
-            </div>
-        </div>
-        <div class="col-6 col-md-3 mb-3">
-            <div class="stat-card bg-success text-white">
-                <div class="stat-title">💰 Hari Ini</div><div id="pendapatanHarian" class="stat-value">Rp 0</div>
-            </div>
-        </div>
-        <div class="col-6 col-md-3 mb-3">
-            <div class="stat-card bg-info text-white">
-                <div class="stat-title">📅 Minggu Ini</div><div id="pendapatanMingguan" class="stat-value">Rp 0</div>
-            </div>
-        </div>
-        <div class="col-6 col-md-3 mb-3">
-            <div class="stat-card bg-dark text-white">
-                <div class="stat-title">🗓️ Bulan Ini</div><div id="pendapatanBulanan" class="stat-value">Rp 0</div>
-            </div>
-        </div>
+        <div class="col-6 col-md-3 mb-3"><div class="stat-card bg-primary text-white"><div class="stat-title">📦 Aset Gudang</div><div id="totalAset" class="stat-value">Rp 0</div></div></div>
+        <div class="col-6 col-md-3 mb-3"><div class="stat-card bg-success text-white"><div class="stat-title">💰 Hari Ini</div><div id="pendapatanHarian" class="stat-value">Rp 0</div></div></div>
+        <div class="col-6 col-md-3 mb-3"><div class="stat-card bg-info text-white"><div class="stat-title">📅 Minggu Ini</div><div id="pendapatanMingguan" class="stat-value">Rp 0</div></div></div>
+        <div class="col-6 col-md-3 mb-3"><div class="stat-card bg-dark text-white"><div class="stat-title">🗓️ Bulan Ini</div><div id="pendapatanBulanan" class="stat-value">Rp 0</div></div></div>
     </div>
 
     <div class="row">
@@ -106,70 +82,45 @@
             <div class="card border-start border-success border-4">
                 <div class="card-body">
                     <h5 class="card-title mb-3 fw-bold text-success">🛒 Keranjang Belanja</h5>
-                    
-                    <div class="col-12 mb-3">
-                        <button type="button" class="btn btn-dark btn-sm w-100 fw-bold py-2 shadow-sm" onclick="bukaScanner('kasir')">
-                            📷 SCAN BARCODE PRODUK
-                        </button>
-                    </div>
+                    <div class="col-12 mb-3"><button type="button" class="btn btn-dark btn-sm w-100 fw-bold py-2 shadow-sm" onclick="bukaScanner('kasir')">📷 SCAN BARCODE PRODUK</button></div>
 
-                    <form id="formKasir" class="row g-2 mb-3">
-                        <div class="col-7">
-                            <input type="text" id="inputPencarianKasir" class="form-control form-control-sm" list="listBarangKasir" placeholder="Ketik manual/Pilih menu..." autocomplete="off" required>
-                            <datalist id="listBarangKasir"></datalist>
-                        </div>
-                        <div class="col-3">
-                            <input type="number" id="jumlahBeli" class="form-control form-control-sm" min="1" placeholder="Qty" required>
-                        </div>
-                        <div class="col-2">
-                            <button type="submit" class="btn btn-success btn-sm w-100 fw-bold">+</button>
-                        </div>
+                    <form id="formKasir" onsubmit="tambahKeKeranjang(event)" class="row g-2 mb-3">
+                        <div class="col-7"><input type="text" id="inputPencarianKasir" class="form-control form-control-sm" list="listBarangKasir" placeholder="Ketik/Pilih menu..." autocomplete="off" required><datalist id="listBarangKasir"></datalist></div>
+                        <div class="col-3"><input type="number" id="jumlahBeli" class="form-control form-control-sm" min="1" placeholder="Qty" required></div>
+                        <div class="col-2"><button type="submit" class="btn btn-success btn-sm w-100 fw-bold">+</button></div>
                     </form>
 
                     <div class="table-responsive mb-2 border rounded" style="max-height: 220px; overflow-y: auto;">
                         <table class="table table-mobile-friendly table-hover mb-0">
-                            <thead class="table-light sticky-top text-nowrap">
-                                <tr><th>Menu</th><th>Qty</th><th>Subtotal</th><th class="text-center">Aksi</th></tr>
-                            </thead>
-                            <tbody id="tabelKeranjang">
-                                <tr><td colspan="4" class="text-center text-muted py-3">Keranjang kosong</td></tr>
-                            </tbody>
+                            <thead class="table-light sticky-top text-nowrap"><tr><th>Menu</th><th>Qty</th><th>Subtotal</th><th class="text-center">Aksi</th></tr></thead>
+                            <tbody id="tabelKeranjang"><tr><td colspan="4" class="text-center text-muted py-3">Keranjang kosong</td></tr></tbody>
                         </table>
                     </div>
                     
                     <div class="bg-light p-3 mt-3 rounded border">
                         <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
-                            <span class="fw-bold text-secondary">Total Belanja:</span>
-                            <span id="totalKeranjang" class="fw-bold text-success fs-4">Rp 0</span>
+                            <span class="fw-bold text-secondary">Total Belanja:</span><span id="totalKeranjang" class="fw-bold text-success fs-4">Rp 0</span>
                         </div>
                         
                         <div class="mb-3 border-bottom pb-2">
                             <label class="small fw-bold text-muted d-block mb-1">Metode Pembayaran:</label>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="metodeBayar" id="bayarTunai" value="TUNAI" checked onchange="gantiMetodeBayar()">
-                                <label class="form-check-label small fw-bold" for="bayarTunai">💵 Tunai (Cash)</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="metodeBayar" id="bayarQris" value="QRIS" onchange="gantiMetodeBayar()">
-                                <label class="form-check-label small fw-bold" for="bayarQris">📱 QRIS / E-Wallet</label>
-                            </div>
+                            <div class="form-check form-check-inline"><input class="form-check-input" type="radio" name="metodeBayar" id="bayarTunai" value="TUNAI" checked onchange="gantiMetodeBayar()"><label class="form-check-label small fw-bold" for="bayarTunai">💵 Tunai (Cash)</label></div>
+                            <div class="form-check form-check-inline"><input class="form-check-input" type="radio" name="metodeBayar" id="bayarQris" value="QRIS" onchange="gantiMetodeBayar()"><label class="form-check-label small fw-bold" for="bayarQris">📱 QRIS / E-Wallet</label></div>
                         </div>
 
                         <div id="boxInputTunai" class="input-group mb-2">
                             <span class="input-group-text fw-bold bg-white text-primary">Tunai (Rp)</span>
-                            <input type="number" id="inputBayar" class="form-control form-control-lg fw-bold text-end" min="0" placeholder="0" oninput="hitungKembalian()" disabled>
+                            <input type="number" id="inputBayar" class="form-control form-control-lg fw-bold text-end" min="0" placeholder="0" 
+                                   oninput="hitungKembalian()" onkeyup="hitungKembalian()" onchange="hitungKembalian()" disabled>
                         </div>
                         
                         <div id="boxTampilanQris" class="qris-display-box d-none">
                             <span class="badge bg-primary mb-2">Silakan Scan Barcode QRIS di Bawah:</span>
-                            <div id="qrisImageContainer">
-                                <p class="small text-danger my-2">⚠️ Anda belum upload gambar QRIS di menu Config!</p>
-                            </div>
+                            <div id="qrisImageContainer"><p class="small text-danger my-2">⚠️ Anda belum upload gambar QRIS di menu Config!</p></div>
                         </div>
 
                         <div class="d-flex justify-content-between align-items-center mt-2">
-                            <span class="fw-bold text-secondary">Kembalian:</span>
-                            <span id="teksKembalian" class="fw-bold text-danger fs-5">Rp 0</span>
+                            <span class="fw-bold text-secondary">Kembalian:</span><span id="teksKembalian" class="fw-bold text-danger fs-5">Rp 0</span>
                         </div>
                     </div>
 
@@ -181,41 +132,19 @@
                 <div class="card-body py-3">
                     <h5 class="card-title mb-3 fw-bold text-primary" style="font-size:16px;">📦 Update Data Menu / Gudang</h5>
                     <div class="mb-3">
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="modeGudang" id="modeTambahBaru" value="baru" checked onchange="gantiModeGudang()">
-                            <label class="form-check-label small text-muted fw-bold" for="modeTambahBaru">Menu Baru</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="modeGudang" id="modeRestock" value="restock" onchange="gantiModeGudang()">
-                            <label class="form-check-label small text-muted fw-bold" for="modeRestock">Tambah Stok</label>
-                        </div>
+                        <div class="form-check form-check-inline"><input class="form-check-input" type="radio" name="modeGudang" id="modeTambahBaru" value="baru" checked onchange="gantiModeGudang()"><label class="form-check-label small text-muted fw-bold" for="modeTambahBaru">Menu Baru</label></div>
+                        <div class="form-check form-check-inline"><input class="form-check-input" type="radio" name="modeGudang" id="modeRestock" value="restock" onchange="gantiModeGudang()"><label class="form-check-label small text-muted fw-bold" for="modeRestock">Tambah Stok</label></div>
                     </div>
-                    <form id="formBarang" class="row g-2">
-                        <div class="col-12" id="boxNamaTeks">
-                            <input type="text" id="namaBarang" class="form-control form-control-sm" placeholder="Ketik Nama Menu Baru">
-                        </div>
-                        <div class="col-12 d-none" id="boxNamaDropdown">
-                            <input type="text" id="pilihBarangGudang" class="form-control form-control-sm" list="listBarangGudang" placeholder="Ketik nama atau scan barcode barang lama..." autocomplete="off" oninput="isiOtomatisHargaGudang()">
-                            <datalist id="listBarangGudang"></datalist>
-                        </div>
+                    <form id="formBarang" onsubmit="simpanBarangGudang(event)" class="row g-2">
+                        <div class="col-12" id="boxNamaTeks"><input type="text" id="namaBarang" class="form-control form-control-sm" placeholder="Ketik Nama Menu Baru"></div>
+                        <div class="col-12 d-none" id="boxNamaDropdown"><input type="text" id="pilihBarangGudang" class="form-control form-control-sm" list="listBarangGudang" placeholder="Ketik nama atau scan barcode barang lama..." autocomplete="off" oninput="isiOtomatisHargaGudang()"><datalist id="listBarangGudang"></datalist></div>
                         <div class="col-12 mt-2" id="boxBarcode">
                             <label class="small text-muted mb-0">Barcode Produk (Opsional)</label>
-                            <div class="input-group input-group-sm">
-                                <input type="text" id="barcodeBarang" class="form-control" placeholder="Scan / Ketik Kode Barcode">
-                                <button class="btn btn-secondary fw-bold" type="button" onclick="bukaScanner('gudang')">📷 Scan</button>
-                            </div>
+                            <div class="input-group input-group-sm"><input type="text" id="barcodeBarang" class="form-control" placeholder="Scan / Ketik Kode Barcode"><button class="btn btn-secondary fw-bold" type="button" onclick="bukaScanner('gudang')">📷 Scan</button></div>
                         </div>
-                        <div class="col-7 mt-2">
-                            <label class="small text-muted mb-0">Harga Jual (Rp)</label>
-                            <input type="number" id="hargaBarang" class="form-control form-control-sm" placeholder="Harga" min="0" required>
-                        </div>
-                        <div class="col-5 mt-2">
-                            <label class="small text-muted mb-0" id="labelStok">Stok Awal</label>
-                            <input type="number" id="stokBarang" class="form-control form-control-sm" placeholder="Jumlah" min="0" required>
-                        </div>
-                        <div class="col-12 mt-3">
-                            <button type="submit" class="btn btn-sm btn-primary w-100 fw-bold" id="btnSimpanGudang">Simpan Ke Database</button>
-                        </div>
+                        <div class="col-7 mt-2"><label class="small text-muted mb-0">Harga Jual (Rp)</label><input type="number" id="hargaBarang" class="form-control form-control-sm" placeholder="Harga" min="0" required></div>
+                        <div class="col-5 mt-2"><label class="small text-muted mb-0" id="labelStok">Stok Awal</label><input type="number" id="stokBarang" class="form-control form-control-sm" placeholder="Jumlah" min="0" required></div>
+                        <div class="col-12 mt-3"><button type="submit" class="btn btn-sm btn-primary w-100 fw-bold">Simpan Ke Database</button></div>
                     </form>
                 </div>
             </div>
@@ -225,14 +154,11 @@
             <div class="card mb-3">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="card-title mb-0 fw-bold text-secondary">📋 Stok Tersedia</h5>
-                        <input type="text" id="inputCari" class="form-control form-control-sm w-50" placeholder="🔍 Cari menu...">
+                        <h5 class="card-title mb-0 fw-bold text-secondary">📋 Stok Tersedia</h5><input type="text" id="inputCari" class="form-control form-control-sm w-50" placeholder="🔍 Cari menu..." oninput="perbaruiTampilan()">
                     </div>
                     <div class="table-responsive border rounded" style="max-height: 250px; overflow-y: auto;">
                         <table class="table table-mobile-friendly table-hover mb-0">
-                            <thead class="table-dark sticky-top text-nowrap">
-                                <tr><th>Nama Menu</th><th>Harga</th><th class="text-center">Stok</th><th class="text-center">Aksi</th></tr>
-                            </thead>
+                            <thead class="table-dark sticky-top text-nowrap"><tr><th>Nama Menu</th><th>Harga</th><th class="text-center">Stok</th><th class="text-center">Aksi</th></tr></thead>
                             <tbody id="tabelBody"></tbody>
                         </table>
                     </div>
@@ -242,8 +168,7 @@
             <div class="card border-start border-info border-4">
                 <div class="card-body py-3">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="card-title fw-bold text-info mb-0" style="font-size:16px;">🧾 Riwayat Nota Hari Ini</h5>
-                        <button class="btn btn-sm btn-outline-danger py-0" onclick="resetRiwayat()">Bersihkan Data</button>
+                        <h5 class="card-title fw-bold text-info mb-0" style="font-size:16px;">🧾 Riwayat Nota</h5><button class="btn btn-sm btn-outline-danger py-0" onclick="resetRiwayat()">Bersihkan Data</button>
                     </div>
                     <div id="listRiwayatContainer" style="max-height: 350px; overflow-y: auto; padding-right: 5px;"></div>
                 </div>
@@ -255,14 +180,8 @@
 <div class="modal fade" id="modalScanner" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
-      <div class="modal-header bg-dark text-white">
-        <h5 class="modal-title fw-bold">📷 Scanner Barcode</h5>
-        <button type="button" class="btn-close btn-close-white" aria-label="Close" onclick="tutupScanner()"></button>
-      </div>
-      <div class="modal-body text-center p-2 bg-light">
-        <p id="teksPetunjukScan" class="small text-muted mb-2">Arahkan kamera ke garis barcode produk. Kamera akan menutup otomatis setelah berhasil.</p>
-        <div id="reader" style="width: 100%; min-height: 250px;"></div>
-      </div>
+      <div class="modal-header bg-dark text-white"><h5 class="modal-title fw-bold">📷 Scanner Barcode</h5><button type="button" class="btn-close btn-close-white" aria-label="Close" onclick="tutupScanner()"></button></div>
+      <div class="modal-body text-center p-2 bg-light"><p id="teksPetunjukScan" class="small text-muted mb-2">Arahkan kamera ke barcode.</p><div id="reader" style="width: 100%; min-height: 250px;"></div></div>
     </div>
   </div>
 </div>
@@ -270,51 +189,33 @@
 <div class="modal fade" id="modalAturAkun" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
-      <div class="modal-header bg-warning">
-        <h5 class="modal-title fw-bold text-dark">⚙️ Pengaturan Toko & Akun</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
+      <div class="modal-header bg-warning"><h5 class="modal-title fw-bold text-dark">⚙️ Pengaturan Toko & Akun</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
       <div class="modal-body" style="max-height: 75vh; overflow-y: auto;">
         <form id="formAturToko" class="row g-2 mb-4" onsubmit="simpanPengaturanToko(event)">
             <div class="col-12"><label class="small fw-bold text-muted">Nama Toko</label><input type="text" id="inputNamaToko" class="form-control form-control-sm fw-bold" required></div>
             <div class="col-12"><label class="small fw-bold text-muted">Alamat Toko</label><input type="text" id="inputAlamatToko" class="form-control form-control-sm" required></div>
             <div class="col-12"><label class="small fw-bold text-muted">No Telepon/WA</label><input type="text" id="inputTeleponToko" class="form-control form-control-sm"></div>
-            
-            <div class="col-12 mt-2"><label class="small fw-bold text-muted">Pesan Bawah (Baris 1)</label><input type="text" id="inputPesanBawah1" class="form-control form-control-sm" required></div>
-            <div class="col-12"><label class="small fw-bold text-muted">Pesan Bawah (Baris 2)</label><input type="text" id="inputPesanBawah2" class="form-control form-control-sm"></div>
-            <div class="col-12"><label class="small fw-bold text-muted">Pesan Bawah (Baris 3)</label><input type="text" id="inputPesanBawah3" class="form-control form-control-sm"></div>
-
+            <div class="col-12 mt-2"><label class="small fw-bold text-muted">Pesan Bawah 1</label><input type="text" id="inputPesanBawah1" class="form-control form-control-sm" required></div>
+            <div class="col-12"><label class="small fw-bold text-muted">Pesan Bawah 2</label><input type="text" id="inputPesanBawah2" class="form-control form-control-sm"></div>
+            <div class="col-12"><label class="small fw-bold text-muted">Pesan Bawah 3</label><input type="text" id="inputPesanBawah3" class="form-control form-control-sm"></div>
             <div class="col-12 mt-3 pt-2 border-top"><label class="small fw-bold text-primary">📱 Sosial Media</label></div>
             <div class="col-12"><div class="input-group input-group-sm mb-2"><span class="input-group-text bg-light fw-bold">📸 IG</span><input type="text" id="inputIg" class="form-control"></div></div>
             <div class="col-12"><div class="input-group input-group-sm mb-2"><span class="input-group-text bg-light fw-bold">📘 FB</span><input type="text" id="inputFb" class="form-control"></div></div>
             <div class="col-12"><div class="input-group input-group-sm mb-2"><span class="input-group-text bg-light fw-bold">🎵 TikTok</span><input type="text" id="inputTiktok" class="form-control"></div></div>
-
-            <div class="col-12 mt-3 pt-2 border-top">
-                <label class="small fw-bold text-success">📱 Upload Gambar QRIS Toko</label>
-                <input type="file" id="inputQrisToko" class="form-control form-control-sm" accept="image/*">
-                <small class="text-muted" style="font-size: 10px;">*Upload screenshot gambar QRIS Anda agar tampil saat transaksi.</small>
-            </div>
-
+            <div class="col-12 mt-3 pt-2 border-top"><label class="small fw-bold text-success">📱 Upload Gambar QRIS</label><input type="file" id="inputQrisToko" class="form-control form-control-sm" accept="image/*"></div>
             <div class="col-12 mt-3 pt-2 border-top"><label class="small fw-bold text-primary">🖼️ Upload Logo Aplikasi</label><input type="file" id="inputLogoAplikasi" class="form-control form-control-sm" accept="image/*"></div>
             <div class="col-12 mt-2"><label class="small fw-bold text-danger">🖨️ Upload Logo Struk Printer</label><input type="file" id="inputLogoStruk" class="form-control form-control-sm" accept="image/*"></div>
             <div class="col-12 mt-3"><button type="submit" class="btn btn-primary btn-sm w-100 fw-bold py-2">Simpan Profil Toko</button></div>
         </form>
-
         <h6 class="fw-bold text-secondary border-bottom pb-2 mt-4">Buat Akun Kasir Baru:</h6>
         <form id="formTambahAkun" class="row g-2 mb-4" onsubmit="tambahAkunBaru(event)">
-            <div class="col-4"><input type="text" id="idBaru" class="form-control form-control-sm" placeholder="ID login" required></div>
-            <div class="col-4"><input type="text" id="namaBaru" class="form-control form-control-sm" placeholder="Nama Kasir" required></div>
-            <div class="col-4"><input type="text" id="passBaru" class="form-control form-control-sm" placeholder="Sandi/PIN" required></div>
+            <div class="col-4"><input type="text" id="idBaru" class="form-control form-control-sm" placeholder="ID" required></div>
+            <div class="col-4"><input type="text" id="namaBaru" class="form-control form-control-sm" placeholder="Nama" required></div>
+            <div class="col-4"><input type="text" id="passBaru" class="form-control form-control-sm" placeholder="PIN" required></div>
             <div class="col-12 mt-2"><button type="submit" class="btn btn-success btn-sm w-100 fw-bold">Tambah Akun</button></div>
         </form>
-
         <h6 class="fw-bold text-secondary border-bottom pb-2">Daftar Akun Terdaftar:</h6>
-        <div class="table-responsive">
-            <table class="table table-sm table-bordered align-middle text-center" style="font-size: 14px;">
-                <thead class="table-light"><tr><th>ID Login</th><th>Nama</th><th>Sandi</th><th>Aksi</th></tr></thead>
-                <tbody id="tabelDaftarAkun"></tbody>
-            </table>
-        </div>
+        <div class="table-responsive"><table class="table table-sm table-bordered align-middle text-center" style="font-size: 14px;"><thead class="table-light"><tr><th>ID</th><th>Nama</th><th>PIN</th><th>Aksi</th></tr></thead><tbody id="tabelDaftarAkun"></tbody></table></div>
       </div>
     </div>
   </div>
@@ -323,327 +224,146 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
+    // ==========================================
+    // 1. VARIABEL GLOBAL & DATABASE
+    // ==========================================
+    let configToko = JSON.parse(localStorage.getItem('lokalcaffee_config')) || { 
+        nama: "LOKAL CAFFEE", alamat: "Ketik Alamat Anda di Pengaturan", telepon: "", 
+        pesanBawah: "Terima Kasih Atas Kunjungan Anda", pesanBawah2: "", pesanBawah3: "",
+        ig: "", fb: "", tiktok: "", logoAplikasi: "", logoStruk: "", qris: ""
+    };
+    
+    let dataPengguna = JSON.parse(localStorage.getItem('lokalcaffee_users')) || [{ id: "admin", pass: "1234", nama: "Admin Utama", peran: "admin" }];
+    let daftarBarang = JSON.parse(localStorage.getItem('lokalcaffee_gudang')) || [];
+    let riwayatPenjualan = JSON.parse(localStorage.getItem('lokalcaffee_riwayat')) || [];
+    
+    let kasirAktif = ""; let peranAktif = ""; 
+    let keranjangBelanja = []; let totalKeranjangGlobal = 0; 
+    let printerCharacteristic = null;
+    let html5QrcodeScanner = null; let scannerMode = ''; 
+
     const svgIG = "data:image/svg+xml;charset=utf-8," + encodeURIComponent("<svg viewBox='0 0 24 24' fill='black' xmlns='http://www.w3.org/2000/svg'><path d='M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2zm-.2 2A3.6 3.6 0 0 0 4 7.6v8.8C4 18.4 5.6 20 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6C20 5.6 18.4 4 16.4 4H7.6zm9.65 1.5a1.25 1.25 0 0 1 0 2.5 1.25 1.25 0 0 1 0-2.5zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6z'/></svg>");
     const svgFB = "data:image/svg+xml;charset=utf-8," + encodeURIComponent("<svg viewBox='0 0 24 24' fill='black' xmlns='http://www.w3.org/2000/svg'><path d='M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-1.1 0-2 .9-2 2v1h4l-1 3h-3v6.8c4.56-.93 8-4.96 8-9.8z'/></svg>");
     const svgTiktok = "data:image/svg+xml;charset=utf-8," + encodeURIComponent("<svg viewBox='0 0 24 24' fill='black' xmlns='http://www.w3.org/2000/svg'><path d='M12.53.02C13.84 0 15.14.01 16.44 0c.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 2.23-1.13 4.45-2.92 5.8-1.78 1.36-4.14 1.84-6.32 1.29-2.18-.53-4.05-2.11-4.88-4.18-.84-2.07-.63-4.5.54-6.38 1.18-1.89 3.23-3.1 5.4-3.41 1.05-.15 2.13-.07 3.16.14V13.6c-.73-.24-1.52-.3-2.28-.15-1.07.2-2.06.84-2.6 1.77-.55.93-.66 2.1-.28 3.1.37.93 1.21 1.63 2.23 1.85 1.02.21 2.1.01 2.93-.57.83-.58 1.36-1.5 1.45-2.51.13-3.53.07-7.07.08-10.61.02-2.16-.03-4.32.02-6.48z'/></svg>");
 
-    let configToko = JSON.parse(localStorage.getItem('lokalcaffee_config')) || { 
-        nama: "LOKAL CAFFEE", alamat: "Ketik Alamat Anda di Pengaturan", telepon: "", 
-        pesanBawah: "Terima Kasih Atas Kunjungan Anda", pesanBawah2: "", pesanBawah3: "",
-        ig: "", fb: "", tiktok: "", logoAplikasi: "", logoStruk: ""     , qris: ""
-    };
-    
-    let dataPengguna = JSON.parse(localStorage.getItem('lokalcaffee_users')) || [{ id: "admin", pass: "1234", nama: "Admin Utama", peran: "admin" }];
-    let kasirAktif = ""; let peranAktif = ""; 
+    function formatRupiah(angka) { return 'Rp ' + angka.toLocaleString('id-ID'); }
 
     // ==========================================
-    // LOGIKA SCANNER BARCODE (TUTUP OTOMATIS)
+    // 2. LOGIKA PERHITUNGAN UANG & KEMBALIAN (BUG FIXED)
     // ==========================================
-    let html5QrcodeScanner = null;
-    let scannerMode = ''; 
-    const modalScanner = new bootstrap.Modal(document.getElementById('modalScanner'));
+    window.hitungKembalian = function() {
+        let elemBayar = document.getElementById('inputBayar');
+        let elemTeks = document.getElementById('teksKembalian');
+        let elemBtn = document.getElementById('btnBayar');
 
-    function bukaScanner(mode) {
-        scannerMode = mode;
-        modalScanner.show();
-        document.getElementById('teksPetunjukScan').innerText = "Arahkan kamera ke garis barcode produk. Kamera akan menutup otomatis setelah berhasil.";
-        html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 15, qrbox: { width: 250, height: 150 }, rememberLastCameraUsed: true });
-        html5QrcodeScanner.render(onScanSuccess, onScanError);
-    }
-
-    function tutupScanner() {
-        if(html5QrcodeScanner) { html5QrcodeScanner.clear().then(() => { modalScanner.hide(); }).catch(error => { modalScanner.hide(); }); }
-    }
-
-    function onScanSuccess(decodedText, decodedResult) {
-        tutupScanner();
-        if (navigator.vibrate) navigator.vibrate(100);
-
-        if (scannerMode === 'gudang') {
-            document.getElementById('barcodeBarang').value = decodedText;
-        } 
-        else if (scannerMode === 'kasir') {
-            let indexGudang = daftarBarang.findIndex(b => b.barcode === decodedText);
-            if (indexGudang !== -1) {
-                let bg = daftarBarang[indexGudang];
-                let itemAda = keranjangBelanja.find(item => item.indexGudang === indexGudang);
-                
-                if (itemAda) {
-                    if ((itemAda.jumlah + 1) > bg.stok) { alert(`Stok ${bg.nama} habis! Sisa stok: ${bg.stok}`); } 
-                    else { itemAda.jumlah += 1; itemAda.subtotal = itemAda.jumlah * itemAda.harga; }
-                } else {
-                    if (bg.stok < 1) return alert(`Stok ${bg.nama} habis!`);
-                    keranjangBelanja.push({ indexGudang: indexGudang, nama: bg.nama, harga: bg.harga, jumlah: 1, subtotal: bg.harga });
-                }
-                perbaruiTampilan();
-            } else {
-                alert(`Barcode [${decodedText}] belum terdaftar di Gudang!`);
-            }
+        if (keranjangBelanja.length === 0) {
+            elemTeks.innerText = "Rp 0";
+            elemTeks.className = "fw-bold text-danger fs-5";
+            elemBtn.disabled = true;
+            return;
         }
-    }
 
-    function onScanError(errorMessage) {}
+        // Hapus karakter aneh/titik bawaan keyboard HP, pastikan hanya angka murni
+        let bayarStr = elemBayar.value.toString().replace(/[^0-9]/g, ''); 
+        let bayar = parseInt(bayarStr) || 0;
+        let kembalian = bayar - totalKeranjangGlobal;
 
-    // ==========================================
-    // SISTEM CONFIG & UI METODE PEMBAYARAN
-    // ==========================================
-    function terapkanConfigToko() {
-        document.getElementById('loginTitle').innerText = configToko.nama;
-        document.title = "Kasir " + configToko.nama; 
-        document.getElementById('inputNamaToko').value = configToko.nama;
-        document.getElementById('inputAlamatToko').value = configToko.alamat || "";
-        document.getElementById('inputTeleponToko').value = configToko.telepon || "";
-        document.getElementById('inputPesanBawah1').value = configToko.pesanBawah || "";
-        document.getElementById('inputPesanBawah2').value = configToko.pesanBawah2 || "";
-        document.getElementById('inputPesanBawah3').value = configToko.pesanBawah3 || "";
-        document.getElementById('inputIg').value = configToko.ig || "";
-        document.getElementById('inputFb').value = configToko.fb || "";
-        document.getElementById('inputTiktok').value = configToko.tiktok || "";
-        
-        const headerLogo = configToko.logoAplikasi ? `<img src="${configToko.logoAplikasi}" style="height:30px; width:30px; border-radius:50%; object-fit:cover; margin-right:10px;">` : `☕ `;
-        document.getElementById('headerTitle').innerHTML = headerLogo + configToko.nama;
-        
-        const loginLogoEl = document.getElementById('loginLogo');
-        if (configToko.logoAplikasi) { loginLogoEl.src = configToko.logoAplikasi; loginLogoEl.classList.remove('d-none'); } else { loginLogoEl.classList.add('d-none'); }
-        
-        // Render Gambar QRIS di Kasir
-        const qrisContainer = document.getElementById('qrisImageContainer');
-        if(configToko.qris) {
-            qrisContainer.innerHTML = `<img src="${configToko.qris}" class="qris-img-render" alt="QRIS Toko">`;
+        if (bayar >= totalKeranjangGlobal && totalKeranjangGlobal > 0) {
+            elemTeks.innerText = formatRupiah(kembalian);
+            elemTeks.className = "fw-bold text-success fs-5"; // Warna Hijau
+            elemBtn.disabled = false; // Tombol Bayar Menyala
         } else {
-            qrisContainer.innerHTML = `<p class="small text-danger my-2">⚠️ Anda belum upload gambar QRIS di menu Config!</p>`;
+            elemTeks.innerText = formatRupiah(kembalian < 0 ? 0 : kembalian);
+            elemTeks.className = "fw-bold text-danger fs-5"; // Warna Merah
+            elemBtn.disabled = true; // Tombol Bayar Mati
         }
-    }
+    };
 
-    // Fungsi Pengatur Switch Pembayaran QRIS vs Tunai
-    function gantiMetodeBayar() {
+    window.gantiMetodeBayar = function() {
         const metode = document.querySelector('input[name="metodeBayar"]:checked').value;
         const boxTunai = document.getElementById('boxInputTunai');
         const boxQris = document.getElementById('boxTampilanQris');
-        const inputBayar = document.getElementById('inputBayar');
+        const inputB = document.getElementById('inputBayar');
 
         if (metode === 'QRIS') {
-            boxTunai.classList.add('d-none');
-            boxQris.classList.remove('d-none');
-            // Jika QRIS, otomatis jumlah bayar disamakan dengan total keranjang (Uang Pas)
-            inputBayar.value = totalKeranjangGlobal;
+            boxTunai.classList.add('d-none'); boxQris.classList.remove('d-none');
+            inputB.value = totalKeranjangGlobal; // Isi otomatis lunas jika QRIS
             hitungKembalian();
         } else {
-            boxTunai.classList.remove('d-none');
-            boxQris.classList.add('d-none');
-            inputBayar.value = '';
+            boxTunai.classList.remove('d-none'); boxQris.classList.add('d-none');
+            inputB.value = ''; // Kosongkan agar kasir input manual
             hitungKembalian();
-            inputBayar.focus();
+            inputB.focus();
         }
-    }
-
-    function bacaFileGambar(file) { return new Promise((resolve) => { const reader = new FileReader(); reader.onload = (e) => resolve(e.target.result); reader.readAsDataURL(file); }); }
-
-    async function simpanPengaturanToko(e) {
-        e.preventDefault();
-        configToko.nama = document.getElementById('inputNamaToko').value.trim();
-        configToko.alamat = document.getElementById('inputAlamatToko').value.trim();
-        configToko.telepon = document.getElementById('inputTeleponToko').value.trim();
-        configToko.pesanBawah = document.getElementById('inputPesanBawah1').value.trim();
-        configToko.pesanBawah2 = document.getElementById('inputPesanBawah2').value.trim();
-        configToko.pesanBawah3 = document.getElementById('inputPesanBawah3').value.trim();
-        configToko.ig = document.getElementById('inputIg').value.trim();
-        configToko.fb = document.getElementById('inputFb').value.trim();
-        configToko.tiktok = document.getElementById('inputTiktok').value.trim();
-        
-        const fileAplikasi = document.getElementById('inputLogoAplikasi').files[0];
-        const fileStruk = document.getElementById('inputLogoStruk').files[0];
-        const fileQris = document.getElementById('inputQrisToko').files[0];
-
-        if (fileAplikasi) configToko.logoAplikasi = await bacaFileGambar(fileAplikasi);
-        if (fileStruk) configToko.logoStruk = await bacaFileGambar(fileStruk);
-        if (fileQris) configToko.qris = await bacaFileGambar(fileQris);
-
-        localStorage.setItem('lokalcaffee_config', JSON.stringify(configToko));
-        terapkanConfigToko(); alert("Pengaturan Toko Berhasil Diperbarui!");
-    }
+    };
 
     // ==========================================
-    // LOGIKA LOGIN & MANAJEMEN AKUN
+    // 3. LOGIKA KERANJANG & TAMPILAN
     // ==========================================
-    function prosesLogin(e) {
-        e.preventDefault();
-        const inputId = document.getElementById('inputId').value.trim().toLowerCase(); const inputPin = document.getElementById('inputPin').value;
-        const akunValid = dataPengguna.find(user => user.id === inputId && user.pass === inputPin);
-        if(akunValid) {
-            kasirAktif = akunValid.nama || akunValid.id || "Kasir Utama"; peranAktif = akunValid.peran || "kasir";
-            document.getElementById('namaKasirAktif').innerText = "👤 " + kasirAktif;
-            if(peranAktif === "admin") { document.getElementById('btnAturAkun').classList.remove('d-none'); renderTabelAkun(); } else { document.getElementById('btnAturAkun').classList.add('d-none'); }
-            document.getElementById('halamanLogin').style.display = "none"; document.getElementById('halamanKasirUtama').style.display = "block";
-            document.getElementById('inputId').value = ""; document.getElementById('inputPin').value = ""; document.getElementById('pesanErrorLogin').classList.add('d-none');
-            perbaruiTampilan(); 
-        } else {
-            document.getElementById('pesanErrorLogin').classList.remove('d-none'); document.getElementById('inputPin').value = ""; 
-        }
-    }
-
-    function keluarKasir() {
-        if(confirm("Yakin ingin mengunci layar kasir?")) {
-            kasirAktif = ""; peranAktif = "";
-            document.getElementById('halamanKasirUtama').style.display = "none"; document.getElementById('halamanLogin').style.display = "flex"; document.getElementById('btnAturAkun').classList.add('d-none');
-        }
-    }
-
-    function renderTabelAkun() {
-        const tbody = document.getElementById('tabelDaftarAkun'); tbody.innerHTML = '';
-        dataPengguna.forEach((user, index) => {
-            const tr = document.createElement('tr');
-            let tombolHapus = (user.id === 'admin') ? `<span class="badge bg-secondary">Terkunci</span>` : `<button class="btn btn-sm btn-outline-danger py-0 px-2 mt-1" onclick="hapusAkun(${index})">Hapus</button>`;
-            tr.innerHTML = `<td class="fw-bold">${user.id}</td><td>${user.nama}</td><td style="font-family: monospace;">${user.pass}</td><td><div class="d-flex justify-content-center gap-1"><button class="btn btn-sm btn-outline-primary py-0 px-2 mt-1" onclick="ubahPassword(${index})">Ubah PIN</button>${tombolHapus}</div></td>`;
-            tbody.appendChild(tr);
-        });
-    }
-
-    function tambahAkunBaru(e) {
-        e.preventDefault();
-        const idBaru = document.getElementById('idBaru').value.trim().toLowerCase(); const namaBaru = document.getElementById('namaBaru').value.trim(); const passBaru = document.getElementById('passBaru').value.trim();
-        if(dataPengguna.find(u => u.id === idBaru)) return alert("ID Pengguna tersebut sudah digunakan!");
-        dataPengguna.push({ id: idBaru, pass: passBaru, nama: namaBaru, peran: "kasir" });
-        localStorage.setItem('lokalcaffee_users', JSON.stringify(dataPengguna)); document.getElementById('formTambahAkun').reset(); renderTabelAkun(); alert("Akun Kasir baru berhasil ditambahkan!");
-    }
-
-    function hapusAkun(index) { if(confirm(`Yakin ingin menghapus akun "${dataPengguna[index].nama}"?`)) { dataPengguna.splice(index, 1); localStorage.setItem('lokalcaffee_users', JSON.stringify(dataPengguna)); renderTabelAkun(); } }
-    function ubahPassword(index) { const pinBaru = prompt("Masukkan PIN baru untuk " + dataPengguna[index].nama + ":"); if (pinBaru !== null && pinBaru.trim() !== "") { dataPengguna[index].pass = pinBaru.trim(); localStorage.setItem('lokalcaffee_users', JSON.stringify(dataPengguna)); renderTabelAkun(); alert("PIN berhasil diperbarui!"); } }
-
-    // ==========================================
-    // DATABASE BARANG & KALKULASI KERANJANG
-    // ==========================================
-    let daftarBarang = JSON.parse(localStorage.getItem('lokalcaffee_gudang')) || [];
-    let riwayatPenjualan = JSON.parse(localStorage.getItem('lokalcaffee_riwayat')) || [];
-    let keranjangBelanja = []; let kataKunciPencarian = ""; let totalKeranjangGlobal = 0; 
-    let printerCharacteristic = null;
-
-    const intentFormBarang = document.getElementById('formBarang'); const formKasir = document.getElementById('formKasir');
-    const tabelBody = document.getElementById('tabelBody'); const tabelKeranjang = document.getElementById('tabelKeranjang');
-    const inputPencarianKasir = document.getElementById('inputPencarianKasir'); const listBarangKasir = document.getElementById('listBarangKasir');
-    const pilihBarangGudang = document.getElementById('pilihBarangGudang'); const listBarangGudang = document.getElementById('listBarangGudang');
-    const listRiwayatContainer = document.getElementById('listRiwayatContainer');
-    const btnBayar = document.getElementById('btnBayar'); const inputCari = document.getElementById('inputCari');
-    const inputBayar = document.getElementById('inputBayar'); const teksKembalian = document.getElementById('teksKembalian');
-
-    function formatRupiah(angka) { return 'Rp ' + angka.toLocaleString('id-ID'); }
-
-    async function hubungkanPrinter() {
-        if (!navigator.bluetooth) return alert("Browser Anda belum mendukung Web Bluetooth.");
-        try {
-            const device = await navigator.bluetooth.requestDevice({ acceptAllDevices: true, optionalServices: ['000018f0-0000-1000-8000-00805f9b34fb'] });
-            document.getElementById('btnHubungkanBluetooth').innerText = "⏳ Loading...";
-            const server = await device.gatt.connect();
-            const service = await server.getPrimaryService('000018f0-0000-1000-8000-00805f9b34fb');
-            printerCharacteristic = await service.getCharacteristic('00002af1-0000-1000-8000-00805f9b34fb');
-            document.getElementById('btnHubungkanBluetooth').className = "btn btn-sm btn-success fw-bold text-white me-2";
-            document.getElementById('btnHubungkanBluetooth').innerText = "🟢 Printer Terhubung";
-            alert("Printer Bluetooth Tersambung!");
-        } catch (error) {
-            document.getElementById('btnHubungkanBluetooth').className = "btn btn-sm btn-info fw-bold text-white me-2";
-            document.getElementById('btnHubungkanBluetooth').innerText = "🔌 Printer";
-        }
-    }
-
-    // UPDATE DATA MULTI-QTY DI KASIR
     window.ubahQtyKeranjang = function(indexKeranjang, delta) {
-        let item = keranjangBelanja[indexKeranjang];
-        let gudangIndex = item.indexGudang;
-        let stokTersedia = daftarBarang[gudangIndex].stok;
+        let item = keranjangBelanja[indexKeranjang]; let stokTersedia = daftarBarang[item.indexGudang].stok;
         let qtyBaru = item.jumlah + delta;
-        
         if (qtyBaru > stokTersedia) { alert(`Stok tidak cukup! Sisa stok ${item.nama}: ${stokTersedia}`); return; }
         if (qtyBaru < 1) { if(confirm(`Hapus ${item.nama} dari keranjang?`)) { removeKeranjang(indexKeranjang); } return; }
-        
-        item.jumlah = qtyBaru; item.subtotal = item.jumlah * item.harga;
-        perbaruiTampilan();
+        item.jumlah = qtyBaru; item.subtotal = item.jumlah * item.harga; perbaruiTampilan();
     };
 
     window.inputQtyKeranjang = function(indexKeranjang, val) {
-        let item = keranjangBelanja[indexKeranjang];
-        let gudangIndex = item.indexGudang;
-        let stokTersedia = daftarBarang[gudangIndex].stok;
+        let item = keranjangBelanja[indexKeranjang]; let stokTersedia = daftarBarang[item.indexGudang].stok;
         let qtyBaru = parseInt(val) || 1; 
-        
-        if (qtyBaru > stokTersedia) { alert(`Stok tidak cukup! Sisa stok ${item.nama}: ${stokTersedia}`); qtyBaru = stokTersedia; }
+        if (qtyBaru > stokTersedia) { alert(`Stok tidak cukup! Sisa: ${stokTersedia}`); qtyBaru = stokTersedia; }
         if (qtyBaru < 1) { qtyBaru = 1; }
-        
-        item.jumlah = qtyBaru; item.subtotal = item.jumlah * item.harga;
-        perbaruiTampilan();
+        item.jumlah = qtyBaru; item.subtotal = item.jumlah * item.harga; perbaruiTampilan();
     };
 
-    function perbaruiTampilan() {
+    window.removeKeranjang = function(index) { keranjangBelanja.splice(index, 1); perbaruiTampilan(); }
+
+    window.perbaruiTampilan = function() {
+        const tabelBody = document.getElementById('tabelBody'); const listBarangKasir = document.getElementById('listBarangKasir');
+        const listBarangGudang = document.getElementById('listBarangGudang'); const tabelKeranjang = document.getElementById('tabelKeranjang');
+        const kataKunciPencarian = document.getElementById('inputCari') ? document.getElementById('inputCari').value : "";
+        const inputB = document.getElementById('inputBayar');
+
         tabelBody.innerHTML = ''; listBarangKasir.innerHTML = ''; listBarangGudang.innerHTML = ''; let hitungTotalAset = 0;
 
         daftarBarang.forEach((barang, index) => {
             hitungTotalAset += (barang.stok * barang.harga);
-            if (barang.stok > 0) { 
-                const opsiSaran = document.createElement('option'); opsiSaran.value = barang.nama; opsiSaran.innerText = `Sisa: ${barang.stok} | ${formatRupiah(barang.harga)}`; 
-                listBarangKasir.appendChild(opsiSaran); 
-            }
-            const opsiGudangSaran = document.createElement('option');
-            opsiGudangSaran.value = barang.nama;
-            opsiGudangSaran.innerText = barang.barcode ? `Barcode: ${barang.barcode} | Stok: ${barang.stok}` : `Stok: ${barang.stok}`;
-            listBarangGudang.appendChild(opsiGudangSaran);
+            if (barang.stok > 0) { const opt1 = document.createElement('option'); opt1.value = barang.nama; opt1.innerText = `Sisa: ${barang.stok} | ${formatRupiah(barang.harga)}`; listBarangKasir.appendChild(opt1); }
+            const opt2 = document.createElement('option'); opt2.value = barang.nama; opt2.innerText = barang.barcode ? `Barcode: ${barang.barcode} | Stok: ${barang.stok}` : `Stok: ${barang.stok}`; listBarangGudang.appendChild(opt2);
             
             if (!barang.nama.toLowerCase().includes(kataKunciPencarian.toLowerCase())) return; 
             const row = document.createElement('tr');
-            row.innerHTML = `
-                <td class="fw-bold text-dark text-wrap">${barang.nama} <br><small class="text-muted fw-normal">${barang.barcode || 'Tanpa Barcode'}</small></td>
-                <td class="text-nowrap">${formatRupiah(barang.harga)}</td>
-                <td class="text-center"><span class="badge ${barang.stok < 5 ? 'bg-danger' : 'bg-secondary'} p-1" style="min-width: 30px;">${barang.stok}</span></td>
-                <td class="text-center">
-                    <div class="btn-group btn-group-sm btn-aksi-group" role="group">
-                        <button class="btn btn-outline-primary" onclick="ubahStokManual(${index}, 1)">+</button>
-                        <button class="btn btn-outline-warning" onclick="ubahStokManual(${index}, -1)">-</button>
-                        <button class="btn btn-outline-danger" onclick="window.hapusBarang(${index})">X</button>
-                    </div>
-                </td>
-            `;
+            row.innerHTML = `<td class="fw-bold text-dark text-wrap">${barang.nama} <br><small class="text-muted fw-normal">${barang.barcode || ''}</small></td><td class="text-nowrap">${formatRupiah(barang.harga)}</td><td class="text-center"><span class="badge ${barang.stok < 5 ? 'bg-danger' : 'bg-secondary'} p-1" style="min-width: 30px;">${barang.stok}</span></td><td class="text-center"><div class="btn-group btn-group-sm"><button class="btn btn-outline-primary" onclick="ubahStokManual(${index}, 1)">+</button><button class="btn btn-outline-warning" onclick="ubahStokManual(${index}, -1)">-</button><button class="btn btn-outline-danger" onclick="hapusBarang(${index})">X</button></div></td>`;
             tabelBody.appendChild(row);
         });
 
         tabelKeranjang.innerHTML = ''; totalKeranjangGlobal = 0;
         if (keranjangBelanja.length === 0) { 
-            tabelKeranjang.innerHTML = `<tr><td colspan="4" class="text-center text-muted py-3">Keranjang masih kosong</td></tr>`; 
-            inputBayar.disabled = true; inputBayar.value = ''; teksKembalian.innerText = 'Rp 0'; btnBayar.disabled = true; 
+            tabelKeranjang.innerHTML = `<tr><td colspan="4" class="text-center text-muted py-3">Keranjang kosong</td></tr>`; 
+            inputB.disabled = true; inputB.value = ''; 
         } else {
-            // Jika keranjang ada isinya, nyalakan input kasir
             const metodeAktif = document.querySelector('input[name="metodeBayar"]:checked').value;
-            inputBayar.disabled = false;
-            
+            inputB.disabled = false;
             keranjangBelanja.forEach((item, index) => {
                 totalKeranjangGlobal += item.subtotal;
                 const row = document.createElement('tr'); 
-                row.innerHTML = `
-                    <td class="text-wrap align-middle"><strong>${item.nama}</strong></td>
-                    <td class="align-middle">
-                        <div class="input-group input-group-sm" style="width: 85px; flex-wrap: nowrap;">
-                            <button class="btn btn-outline-secondary px-2" type="button" onclick="ubahQtyKeranjang(${index}, -1)">-</button>
-                            <input type="number" class="form-control input-qty-keranjang" value="${item.jumlah}" min="1" onchange="inputQtyKeranjang(${index}, this.value)">
-                            <button class="btn btn-outline-secondary px-2" type="button" onclick="ubahQtyKeranjang(${index}, 1)">+</button>
-                        </div>
-                    </td>
-                    <td class="text-nowrap align-middle">${formatRupiah(item.subtotal)}</td>
-                    <td class="text-center align-middle"><button class="btn btn-sm btn-danger py-0 px-2" onclick="removeKeranjang(${index})">X</button></td>
-                `; 
+                row.innerHTML = `<td class="text-wrap align-middle"><strong>${item.nama}</strong></td><td class="align-middle"><div class="input-group input-group-sm" style="width: 85px; flex-wrap: nowrap;"><button class="btn btn-outline-secondary px-2" type="button" onclick="ubahQtyKeranjang(${index}, -1)">-</button><input type="number" class="form-control input-qty-keranjang" value="${item.jumlah}" min="1" onchange="inputQtyKeranjang(${index}, this.value)"><button class="btn btn-outline-secondary px-2" type="button" onclick="ubahQtyKeranjang(${index}, 1)">+</button></div></td><td class="text-nowrap align-middle">${formatRupiah(item.subtotal)}</td><td class="text-center align-middle"><button class="btn btn-sm btn-danger py-0 px-2" onclick="removeKeranjang(${index})">X</button></td>`; 
                 tabelKeranjang.appendChild(row);
             });
-
-            // Sinkronisasi ulang jika user memilih QRIS saat keranjang dimodifikasi jumlahnya
-            if (metodeAktif === 'QRIS') {
-                inputBayar.value = totalKeranjangGlobal;
-            }
+            if (metodeAktif === 'QRIS') inputB.value = totalKeranjangGlobal;
         }
-        document.getElementById('totalKeranjang').innerText = formatRupiah(totalKeranjangGlobal); hitungKembalian(); 
+
+        document.getElementById('totalKeranjang').innerText = formatRupiah(totalKeranjangGlobal); 
+        hitungKembalian(); 
 
         let harian = 0, mingguan = 0, bulanan = 0; const now = new Date();
         const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
         const startOfWeek = new Date(now.getFullYear(), now.getMonth(), now.getDate() - (now.getDay() || 7) + 1).getTime();
         const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
 
+        const listRiwayatContainer = document.getElementById('listRiwayatContainer');
         listRiwayatContainer.innerHTML = ''; 
-        if(riwayatPenjualan.length === 0) listRiwayatContainer.innerHTML = `<p class="text-center text-muted small mt-3">Belum ada transaksi sama sekali.</p>`;
+        if(riwayatPenjualan.length === 0) listRiwayatContainer.innerHTML = `<p class="text-center text-muted small mt-3">Belum ada transaksi.</p>`;
 
         riwayatPenjualan.forEach((nota, indexNota) => {
             const waktuTransaksi = nota.notaId; 
@@ -651,44 +371,73 @@
             if (waktuTransaksi >= startOfWeek) mingguan += nota.totalNota;
             if (waktuTransaksi >= startOfMonth) bulanan += nota.totalNota;
             const rincianItem = nota.items.map(i => `${i.nama} (${i.jumlah})`).join(', ');
-            
-            // Tambahkan Indikator QRIS / Tunai di Riwayat Nota
             const badgeMetode = nota.metode === 'QRIS' ? `<span class="badge bg-success ms-1">QRIS</span>` : `<span class="badge bg-secondary ms-1">TUNAI</span>`;
-            
             const divCard = document.createElement('div'); divCard.className = "nota-card d-flex justify-content-between align-items-center";
-            divCard.innerHTML = `<div style="width: 65%;"><div class="fw-bold text-dark">🧾 Nota #${riwayatPenjualan.length - indexNota} <span class="badge bg-light text-secondary border ms-1 fw-normal">${nota.kasir}</span>${badgeMetode}</div><div class="text-muted" style="font-size: 11px;">${nota.waktu}</div><div class="text-secondary mt-1 text-truncate" style="font-size: 12px; max-width: 100%;" title="${rincianItem}">${rincianItem}</div></div><div class="text-end" style="width: 35%;"><span class="text-success fw-bold d-block fs-6">${formatRupiah(nota.totalNota)}</span><div class="mt-1"><button class="btn btn-sm btn-secondary py-0 px-2" style="font-size:10px;" onclick="pemicuCetakLangsung(${indexNota})">🖨️ Cetak</button><button class="btn btn-sm btn-danger py-0 px-1 ms-1" style="font-size:10px;" onclick="batalkanTransaksiPenuh(${indexNota})">Batal</button></div></div>`;
+            divCard.innerHTML = `<div style="width: 65%;"><div class="fw-bold text-dark">🧾 #${riwayatPenjualan.length - indexNota} <span class="badge bg-light text-secondary border ms-1 fw-normal">${nota.kasir}</span>${badgeMetode}</div><div class="text-muted" style="font-size: 11px;">${nota.waktu}</div><div class="text-secondary mt-1 text-truncate" style="font-size: 12px;" title="${rincianItem}">${rincianItem}</div></div><div class="text-end" style="width: 35%;"><span class="text-success fw-bold d-block fs-6">${formatRupiah(nota.totalNota)}</span><div class="mt-1"><button class="btn btn-sm btn-secondary py-0 px-2" style="font-size:10px;" onclick="pemicuCetakLangsung(${indexNota})">🖨️ Cetak</button><button class="btn btn-sm btn-danger py-0 px-1 ms-1" style="font-size:10px;" onclick="batalkanTransaksiPenuh(${indexNota})">Batal</button></div></div>`;
             listRiwayatContainer.appendChild(divCard);
         });
 
         document.getElementById('totalAset').innerText = formatRupiah(hitungTotalAset); document.getElementById('pendapatanHarian').innerText = formatRupiah(harian); document.getElementById('pendapatanMingguan').innerText = formatRupiah(mingguan); document.getElementById('pendapatanBulanan').innerText = formatRupiah(bulanan);
         localStorage.setItem('lokalcaffee_gudang', JSON.stringify(daftarBarang)); localStorage.setItem('lokalcaffee_riwayat', JSON.stringify(riwayatPenjualan));
-    }
+    };
 
-    function batalkanTransaksiPenuh(indexNota) {
-        if (confirm(`Apakah Anda yakin membatalkan Nota ini? Stok akan dikembalikan ke gudang dan pendapatan akan dikurangi otomatis.`)) {
-            riwayatPenjualan[indexNota].items.forEach(itemNota => { const barangGudang = daftarBarang.find(b => b.nama === itemNota.nama); if (barangGudang) barangGudang.stok += itemNota.jumlah; });
-            riwayatPenjualan.splice(indexNota, 1); perbaruiTampilan();
+    window.tambahKeKeranjang = function(e) {
+        e.preventDefault();
+        const namaDiketik = document.getElementById('inputPencarianKasir').value.trim(); const qty = parseInt(document.getElementById('jumlahBeli').value);
+        const indexGudang = daftarBarang.findIndex(b => b.nama === namaDiketik || b.barcode === namaDiketik);
+        if (indexGudang === -1) return alert("Menu tidak ditemukan!");
+        const bg = daftarBarang[indexGudang];
+        if (qty > bg.stok) return alert(`Stok ${bg.nama} kurang!`);
+        const itemAda = keranjangBelanja.find(item => item.indexGudang === indexGudang);
+        if (itemAda) { if ((itemAda.jumlah + qty) > bg.stok) return alert(`Stok kurang!`); itemAda.jumlah += qty; itemAda.subtotal = itemAda.jumlah * itemAda.harga; } 
+        else { keranjangBelanja.push({ indexGudang: indexGudang, nama: bg.nama, harga: bg.harga, jumlah: qty, subtotal: qty * bg.harga }); }
+        document.getElementById('inputPencarianKasir').value = ''; document.getElementById('jumlahBeli').value = ''; perbaruiTampilan(); document.getElementById('inputPencarianKasir').focus();
+    };
+
+    // ==========================================
+    // 4. LOGIKA SCANNER KAMERA
+    // ==========================================
+    window.bukaScanner = function(mode) {
+        scannerMode = mode; const modalScanner = new bootstrap.Modal(document.getElementById('modalScanner')); modalScanner.show();
+        html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 15, qrbox: { width: 250, height: 150 }});
+        html5QrcodeScanner.render(onScanSuccess, onScanError);
+    };
+
+    window.tutupScanner = function() {
+        if(html5QrcodeScanner) { html5QrcodeScanner.clear().then(() => { bootstrap.Modal.getInstance(document.getElementById('modalScanner')).hide(); }); }
+    };
+
+    function onScanSuccess(decodedText, decodedResult) {
+        tutupScanner(); if (navigator.vibrate) navigator.vibrate(100);
+        if (scannerMode === 'gudang') { document.getElementById('barcodeBarang').value = decodedText; } 
+        else if (scannerMode === 'kasir') {
+            let indexGudang = daftarBarang.findIndex(b => b.barcode === decodedText);
+            if (indexGudang !== -1) {
+                let bg = daftarBarang[indexGudang]; let itemAda = keranjangBelanja.find(item => item.indexGudang === indexGudang);
+                if (itemAda) { if ((itemAda.jumlah + 1) > bg.stok) { alert(`Stok ${bg.nama} habis!`); } else { itemAda.jumlah += 1; itemAda.subtotal = itemAda.jumlah * itemAda.harga; } } 
+                else { if (bg.stok < 1) return alert(`Stok habis!`); keranjangBelanja.push({ indexGudang: indexGudang, nama: bg.nama, harga: bg.harga, jumlah: 1, subtotal: bg.harga }); }
+                perbaruiTampilan();
+            } else { alert(`Barcode [${decodedText}] belum terdaftar di Gudang!`); }
         }
     }
+    function onScanError(errorMessage) {}
 
-    function resetRiwayat() { if(riwayatPenjualan.length === 0) return alert("Riwayat sudah kosong."); if (confirm(`PERINGATAN BAHAYA!\n\nYakin menghapus SEMUA data riwayat transaksi?`)) { riwayatPenjualan = []; perbaruiTampilan(); } }
+    // ==========================================
+    // 5. MANAJEMEN GUDANG & RIWAYAT
+    // ==========================================
+    window.gantiModeGudang = function() {
+        const mode = document.querySelector('input[name="modeGudang"]:checked').value;
+        const boxNamaTeks = document.getElementById('boxNamaTeks'); const boxNamaDropdown = document.getElementById('boxNamaDropdown'); const boxBarcode = document.getElementById('boxBarcode');
+        if (mode === 'restock') { boxNamaTeks.classList.add('d-none'); boxNamaDropdown.classList.remove('d-none'); boxBarcode.classList.add('d-none'); document.getElementById('namaBarang').removeAttribute('required'); document.getElementById('pilihBarangGudang').setAttribute('required', 'true'); } 
+        else { boxNamaTeks.classList.remove('d-none'); boxNamaDropdown.classList.add('d-none'); boxBarcode.classList.remove('d-none'); document.getElementById('namaBarang').setAttribute('required', 'true'); document.getElementById('pilihBarangGudang').removeAttribute('required'); document.getElementById('formBarang').reset(); document.getElementById('modeTambahBaru').checked = true; }
+    };
 
-    formKasir.addEventListener('submit', function(e) {
-        e.preventDefault();
-        const namaDiketik = inputPencarianKasir.value.trim(); const qty = parseInt(document.getElementById('jumlahBeli').value);
-        const indexGudang = daftarBarang.findIndex(b => b.nama === namaDiketik || b.barcode === namaDiketik);
-        if (indexGudang === -1) return alert("Menu tidak ditemukan! Pastikan memilih dari daftar saran.");
-        const bg = daftarBarang[indexGudang];
-        if (qty > bg.stok) return alert(`Stok ${bg.nama} tidak mencukupi! Sisa: ${bg.stok}`);
-        const itemAda = keranjangBelanja.find(item => item.indexGudang === indexGudang);
-        if (itemAda) { if ((itemAda.jumlah + qty) > bg.stok) return alert(`Total di keranjang melebihi stok gudang!`); itemAda.jumlah += qty; itemAda.subtotal = itemAda.jumlah * itemAda.harga; } 
-        else { keranjangBelanja.push({ indexGudang: indexGudang, nama: bg.nama, harga: bg.harga, jumlah: qty, subtotal: qty * bg.harga }); }
-        inputPencarianKasir.value = ''; document.getElementById('jumlahBeli').value = ''; perbaruiTampilan(); inputPencarianKasir.focus();
-    });
+    window.isiOtomatisHargaGudang = function() {
+        const nilaiInput = document.getElementById('pilihBarangGudang').value.trim(); const idx = daftarBarang.findIndex(b => b.nama === nilaiInput || b.barcode === nilaiInput);
+        if (idx !== -1) document.getElementById('hargaBarang').value = daftarBarang[idx].harga;
+    };
 
-    function removeKeranjang(index) { keranjangBelanja.splice(index, 1); perbaruiTampilan(); }
-
-    intentFormBarang.addEventListener('submit', function(e) {
+    window.simpanBarangGudang = function(e) {
         e.preventDefault();
         const mode = document.querySelector('input[name="modeGudang"]:checked').value; const harga = parseInt(document.getElementById('hargaBarang').value); const stok = parseInt(document.getElementById('stokBarang').value);
         if (mode === 'baru') {
@@ -696,137 +445,176 @@
             if(daftarBarang.find(b => b.nama.toLowerCase() === nama.toLowerCase())) return alert("Menu sudah ada!");
             daftarBarang.push({ nama: nama, harga: harga, stok: stok, barcode: barcodeInput });
         } else {
-            const nilaiInputGudang = pilihBarangGudang.value.trim(); const idx = daftarBarang.findIndex(b => b.nama === nilaiInputGudang || b.barcode === nilaiInputGudang);
-            if (idx === -1) return alert("Barang lama tidak ditemukan! Pastikan mengetik nama/barcode yang sesuai.");
-            daftarBarang[idx].stok += stok; daftarBarang[idx].harga = harga;
+            const nilaiInputGudang = document.getElementById('pilihBarangGudang').value.trim(); const idx = daftarBarang.findIndex(b => b.nama === nilaiInputGudang || b.barcode === nilaiInputGudang);
+            if (idx === -1) return alert("Barang tidak ditemukan!"); daftarBarang[idx].stok += stok; daftarBarang[idx].harga = harga;
         }
-        intentFormBarang.reset(); document.getElementById('modeTambahBaru').checked = true; gantiModeGudang(); perbaruiTampilan();
-    });
+        document.getElementById('formBarang').reset(); document.getElementById('modeTambahBaru').checked = true; gantiModeGudang(); perbaruiTampilan();
+    };
 
-    function ubahStokManual(index, jumlah) { daftarBarang[index].stok += jumlah; if (daftarBarang[index].stok < 0) daftarBarang[index].stok = 0; perbaruiTampilan(); }
-    window.hapusBarang = function(index) { if (confirm(`Hapus menu "${daftarBarang[index].nama}" dari daftar?`)) { daftarBarang.splice(index, 1); perbaruiTampilan(); } }
-    inputCari.addEventListener('input', function(e) { kataKunciPencarian = e.target.value; perbaruiTampilan(); });
+    window.ubahStokManual = function(index, jumlah) { daftarBarang[index].stok += jumlah; if (daftarBarang[index].stok < 0) daftarBarang[index].stok = 0; perbaruiTampilan(); };
+    window.hapusBarang = function(index) { if (confirm(`Hapus "${daftarBarang[index].nama}"?`)) { daftarBarang.splice(index, 1); perbaruiTampilan(); } };
+    window.resetRiwayat = function() { if(riwayatPenjualan.length === 0) return alert("Kosong."); if (confirm(`Hapus SEMUA riwayat transaksi?`)) { riwayatPenjualan = []; perbaruiTampilan(); } };
+    window.batalkanTransaksiPenuh = function(indexNota) { if (confirm(`Batalkan Nota?`)) { riwayatPenjualan[indexNota].items.forEach(itemNota => { const bg = daftarBarang.find(b => b.nama === itemNota.nama); if (bg) bg.stok += itemNota.jumlah; }); riwayatPenjualan.splice(indexNota, 1); perbaruiTampilan(); } };
 
-    function prosesTransaksiSelesai() {
+    // ==========================================
+    // 6. PROSES TRANSAKSI & CETAK PRINTER
+    // ==========================================
+    window.prosesTransaksiSelesai = function() {
         if (keranjangBelanja.length === 0) return;
         const metodeAktif = document.querySelector('input[name="metodeBayar"]:checked').value;
         let totalNota = 0; let itemsNota = [];
+        keranjangBelanja.forEach(item => { daftarBarang[item.indexGudang].stok -= item.jumlah; totalNota += item.subtotal; itemsNota.push({ nama: item.nama, harga: item.harga, jumlah: item.jumlah, subtotal: item.subtotal }); });
         
-        keranjangBelanja.forEach(item => { 
-            daftarBarang[item.indexGudang].stok -= item.jumlah; 
-            totalNota += item.subtotal; 
-            itemsNota.push({ nama: item.nama, harga: item.harga, jumlah: item.jumlah, subtotal: item.subtotal }); 
-        });
+        let valStr = document.getElementById('inputBayar').value.toString().replace(/[^0-9]/g, '');
+        let bayar = parseInt(valStr) || totalNota;
         
-        let bayar = parseInt(inputBayar.value) || totalNota;
-        const notaBaru = { 
-            notaId: Date.now(), 
-            waktu: new Date().toLocaleString('id-ID'), 
-            items: itemsNota, 
-            totalNota: totalNota, 
-            bayar: bayar, 
-            kembali: bayar - totalNota, 
-            kasir: kasirAktif,
-            metode: metodeAktif // Menyimpan data jenis transaksi
-        };
-        
-        riwayatPenjualan.unshift(notaBaru); keranjangBelanja = []; inputBayar.value = '';
-        
-        // Kembalikan saklar metode pembayaran ke Tunai untuk transaksi berikutnya
-        document.getElementById('bayarTunai').checked = true;
-        document.getElementById('boxInputTunai').classList.remove('d-none');
-        document.getElementById('boxTampilanQris').classList.add('d-none');
-        
+        const notaBaru = { notaId: Date.now(), waktu: new Date().toLocaleString('id-ID'), items: itemsNota, totalNota: totalNota, bayar: bayar, kembali: bayar - totalNota, kasir: kasirAktif, metode: metodeAktif };
+        riwayatPenjualan.unshift(notaBaru); keranjangBelanja = []; document.getElementById('inputBayar').value = '';
+        document.getElementById('bayarTunai').checked = true; document.getElementById('boxInputTunai').classList.remove('d-none'); document.getElementById('boxTampilanQris').classList.add('d-none');
         perbaruiTampilan(); eksekusiCetakPWA(notaBaru);
+    };
+
+    function getCenteredTextMultiLine(text, width = 32) {
+        if(!text) return ""; let words = text.split(" "); let lines = []; let currentLine = "";
+        words.forEach(word => { if((currentLine + word).length > width) { lines.push(currentLine.trim()); currentLine = word + " "; } else { currentLine += word + " "; } });
+        if(currentLine.trim().length > 0) lines.push(currentLine.trim());
+        let result = ""; lines.forEach(line => { let pad = Math.max(0, Math.floor((width - line.length) / 2)); result += " ".repeat(pad) + line + "\n"; }); return result;
     }
 
-    // ==========================================
-    // LOGIKA TRANSMISI DATA PRINTER BLUETOOTH
-    // ==========================================
+    function concatBytes(a, b) { let c = new Uint8Array(a.length + b.length); c.set(a, 0); c.set(b, a.length); return c; }
+    
+    async function convertImageToESC(imgDataUrl, isLogoUtama = true) {
+        return new Promise((resolve) => {
+            const img = new Image(); img.onload = () => {
+                const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
+                const maxWidth = isLogoUtama ? 180 : 24; const scale = maxWidth / img.width; const width = maxWidth; const height = Math.floor(img.height * scale);
+                canvas.width = width; canvas.height = height; ctx.fillStyle = "white"; ctx.fillRect(0, 0, width, height); ctx.drawImage(img, 0, 0, width, height);
+                const imgData = ctx.getImageData(0, 0, width, height); const pixels = imgData.data;
+                const widthBytes = Math.ceil(width / 8); const xL = widthBytes % 256; const xH = Math.floor(widthBytes / 256); const yL = height % 256; const yH = Math.floor(height / 256);
+                const data = new Uint8Array(8 + widthBytes * height); data.set([0x1D, 0x76, 0x30, 0x00, xL, xH, yL, yH], 0);
+                let dataIndex = 8;
+                for (let y = 0; y < height; y++) { for (let xByte = 0; xByte < widthBytes; xByte++) { let byte = 0; for (let bit = 0; bit < 8; bit++) { const x = xByte * 8 + bit; if (x < width) { const idx = (y * width + x) * 4; const brightness = (pixels[idx] * 0.299 + pixels[idx+1] * 0.587 + pixels[idx+2] * 0.114); if (pixels[idx+3] > 128 && brightness < 128) byte |= (1 << (7 - bit)); } } data[dataIndex++] = byte; } }
+                resolve(data);
+            }; img.src = imgDataUrl;
+        });
+    }
+
     async function buatBarisSosialMedia(svgBase64, teksAkun) {
         return new Promise((resolve) => {
-            const img = new Image();
-            img.onload = () => {
+            const img = new Image(); img.onload = () => {
                 const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
                 canvas.width = 384; canvas.height = 36; ctx.fillStyle = "white"; ctx.fillRect(0, 0, canvas.width, canvas.height);
-                ctx.font = "20px monospace"; ctx.fillStyle = "black"; const startX = 12; 
-                ctx.drawImage(img, startX, 6, 24, 24); ctx.fillText(teksAkun, startX + 34, 25); 
+                ctx.font = "20px monospace"; ctx.fillStyle = "black"; const startX = 12; ctx.drawImage(img, startX, 6, 24, 24); ctx.fillText(teksAkun, startX + 34, 25); 
                 const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height); const pixels = imgData.data;
                 const widthBytes = Math.ceil(canvas.width / 8); const xL = widthBytes % 256; const xH = Math.floor(widthBytes / 256); const yL = canvas.height % 256; const yH = Math.floor(canvas.height / 256);
                 const data = new Uint8Array(8 + widthBytes * canvas.height); data.set([0x1D, 0x76, 0x30, 0x00, xL, xH, yL, yH], 0);
                 let dataIndex = 8;
                 for (let y = 0; y < canvas.height; y++) { for (let xByte = 0; xByte < widthBytes; xByte++) { let byte = 0; for (let bit = 0; bit < 8; bit++) { const x = xByte * 8 + bit; if (x < canvas.width) { const idx = (y * canvas.width + x) * 4; const brightness = (pixels[idx] * 0.299 + pixels[idx+1] * 0.587 + pixels[idx+2] * 0.114); if (pixels[idx+3] > 128 && brightness < 128) byte |= (1 << (7 - bit)); } } data[dataIndex++] = byte; } }
                 resolve(data);
-            };
-            img.src = svgBase64;
+            }; img.src = svgBase64;
         });
     }
 
-    async function eksekusiCetakPWA(nota) {
-        if (!printerCharacteristic) return alert("Printer Bluetooth belum tersambung. Harap hubungkan printer terlebih dahulu.");
+    window.hubungkanPrinter = async function() {
+        if (!navigator.bluetooth) return alert("Browser belum mendukung Web Bluetooth.");
+        try {
+            const device = await navigator.bluetooth.requestDevice({ acceptAllDevices: true, optionalServices: ['000018f0-0000-1000-8000-00805f9b34fb'] });
+            document.getElementById('btnHubungkanBluetooth').innerText = "⏳ Loading...";
+            const server = await device.gatt.connect(); const service = await server.getPrimaryService('000018f0-0000-1000-8000-00805f9b34fb');
+            printerCharacteristic = await service.getCharacteristic('00002af1-0000-1000-8000-00805f9b34fb');
+            document.getElementById('btnHubungkanBluetooth').className = "btn btn-sm btn-success fw-bold text-white me-2"; document.getElementById('btnHubungkanBluetooth').innerText = "🟢 Printer Terhubung";
+        } catch (error) { document.getElementById('btnHubungkanBluetooth').className = "btn btn-sm btn-info fw-bold text-white me-2"; document.getElementById('btnHubungkanBluetooth').innerText = "🔌 Printer"; }
+    };
 
-        let finalBytes = new Uint8Array(0);
-        finalBytes = concatBytes(finalBytes, new Uint8Array([0x1B, 0x40])); 
-
+    window.eksekusiCetakPWA = async function(nota) {
+        if (!printerCharacteristic) return alert("Printer belum tersambung.");
+        let finalBytes = new Uint8Array(0); finalBytes = concatBytes(finalBytes, new Uint8Array([0x1B, 0x40])); 
         if (configToko.logoStruk && configToko.logoStruk.startsWith("data:image")) {
-            finalBytes = concatBytes(finalBytes, new Uint8Array([0x1B, 0x61, 0x01])); 
-            document.getElementById('btnBayar').innerText = "⏳ Memproses Logo...";
-            const logoUtamaBytes = await convertImageToESC(configToko.logoStruk, true);
-            finalBytes = concatBytes(finalBytes, logoUtamaBytes);
-            finalBytes = concatBytes(finalBytes, new Uint8Array([0x1B, 0x61, 0x00])); 
+            finalBytes = concatBytes(finalBytes, new Uint8Array([0x1B, 0x61, 0x01])); document.getElementById('btnBayar').innerText = "⏳ Memproses Logo...";
+            finalBytes = concatBytes(finalBytes, await convertImageToESC(configToko.logoStruk, true)); finalBytes = concatBytes(finalBytes, new Uint8Array([0x1B, 0x61, 0x00])); 
         }
-
-        let namaTokoStr = configToko.nama.toUpperCase(); let alamatTokoStr = configToko.alamat || ""; let teleponTokoStr = configToko.telepon || "";
-        let teksStruk = "\n" + getCenteredTextMultiLine(namaTokoStr);
-        if(alamatTokoStr !== "") teksStruk += getCenteredTextMultiLine(alamatTokoStr);
-        if(teleponTokoStr !== "") teksStruk += getCenteredTextMultiLine(teleponTokoStr);
+        let teksStruk = "\n" + getCenteredTextMultiLine(configToko.nama.toUpperCase());
+        if(configToko.alamat) teksStruk += getCenteredTextMultiLine(configToko.alamat);
+        if(configToko.telepon) teksStruk += getCenteredTextMultiLine(configToko.telepon);
+        teksStruk += "--------------------------------\n"; teksStruk += `      ${nota.waktu}\n      Kasir: ${nota.kasir || "Utama"}\n--------------------------------\n`;
+        nota.items.forEach(item => { teksStruk += `${item.nama.substring(0, 20)}\n`; let dtl = `  ${item.jumlah} x ${item.harga.toLocaleString('id-ID')}`; let sub = item.subtotal.toLocaleString('id-ID'); let spc = 32 - dtl.length - sub.length; teksStruk += dtl + " ".repeat(spc < 1 ? 1 : spc) + sub + "\n"; });
         teksStruk += "--------------------------------\n";
-        teksStruk += `      ${nota.waktu}\n      Kasir: ${nota.kasir || "Kasir Utama"}\n--------------------------------\n`;
-        
-        nota.items.forEach(item => {
-            teksStruk += `${item.nama.substring(0, 20)}\n`;
-            let dtl = `  ${item.jumlah} x ${item.harga.toLocaleString('id-ID')}`; let sub = item.subtotal.toLocaleString('id-ID');
-            let spc = 32 - dtl.length - sub.length; teksStruk += dtl + " ".repeat(spc < 1 ? 1 : spc) + sub + "\n";
-        });
-        teksStruk += "--------------------------------\n";
-        
-        // MODIFIKASI STRUK UNTUK JENIS PEMBAYARAN
         let ttl = "TOTAL BELANJA", valTtl = nota.totalNota.toLocaleString('id-ID'); teksStruk += ttl + " ".repeat(Math.max(1, 32 - ttl.length - valTtl.length)) + valTtl + "\n";
-        
-        let jenisBayarStr = nota.metode === 'QRIS' ? "QRIS / ELEKTRONIK" : "TUNAI (CASH)";
-        teksStruk += "METODE  : " + jenisBayarStr + "\n";
-        
+        let jenisBayarStr = nota.metode === 'QRIS' ? "QRIS / E-WALLET" : "TUNAI (CASH)"; teksStruk += "METODE  : " + jenisBayarStr + "\n";
         let byr = "BAYAR", valByr = nota.bayar.toLocaleString('id-ID'); teksStruk += byr + " ".repeat(Math.max(1, 32 - byr.length - valByr.length)) + valByr + "\n";
         let kbl = "KEMBALI", valKbl = nota.kembali.toLocaleString('id-ID'); teksStruk += kbl + " ".repeat(Math.max(1, 32 - kbl.length - valKbl.length)) + valKbl + "\n";
         teksStruk += "--------------------------------\n";
-        
-        teksStruk += getCenteredTextMultiLine(configToko.pesanBawah || "Terima Kasih Atas Kunjungan Anda");
+        teksStruk += getCenteredTextMultiLine(configToko.pesanBawah || "Terima Kasih");
         if (configToko.pesanBawah2) teksStruk += getCenteredTextMultiLine(configToko.pesanBawah2);
         if (configToko.pesanBawah3) teksStruk += getCenteredTextMultiLine(configToko.pesanBawah3);
         teksStruk += "\n";
-
         const encoder = new TextEncoder(); finalBytes = concatBytes(finalBytes, encoder.encode(teksStruk));
-
         if (configToko.ig || configToko.fb || configToko.tiktok) {
-            document.getElementById('btnBayar').innerText = "⏳ Menyusun Sosmed...";
-            finalBytes = concatBytes(finalBytes, new Uint8Array([0x1B, 0x61, 0x00])); 
+            document.getElementById('btnBayar').innerText = "⏳ Menyusun Sosmed..."; finalBytes = concatBytes(finalBytes, new Uint8Array([0x1B, 0x61, 0x00])); 
             if (configToko.ig) finalBytes = concatBytes(finalBytes, await buatBarisSosialMedia(svgIG, configToko.ig));
             if (configToko.fb) finalBytes = concatBytes(finalBytes, await buatBarisSosialMedia(svgFB, configToko.fb));
             if (configToko.tiktok) finalBytes = concatBytes(finalBytes, await buatBarisSosialMedia(svgTiktok, configToko.tiktok));
         }
-
-        finalBytes = concatBytes(finalBytes, encoder.encode("\n\n\n"));
-        document.getElementById('btnBayar').innerText = "🖨️ Mengirim ke Printer...";
-        try {
-            const chunk_size = 20; for (let i = 0; i < finalBytes.length; i += chunk_size) { await printerCharacteristic.writeValue(finalBytes.slice(i, i + chunk_size)); }
-        } catch (error) { alert("Proses cetak gagal: " + error); }
+        finalBytes = concatBytes(finalBytes, encoder.encode("\n\n\n")); document.getElementById('btnBayar').innerText = "🖨️ Mengirim...";
+        try { const chunk_size = 20; for (let i = 0; i < finalBytes.length; i += chunk_size) { await printerCharacteristic.writeValue(finalBytes.slice(i, i + chunk_size)); } } catch (error) { alert("Cetak gagal: " + error); }
         document.getElementById('btnBayar').innerText = "⚡ BAYAR & CETAK STRUK";
+    };
+
+    window.pemicuCetakLangsung = function(idx) { eksekusiCetakPWA(riwayatPenjualan[idx]); };
+
+    // ==========================================
+    // 7. PENGATURAN TOKO & LOGIN
+    // ==========================================
+    function bacaFileGambar(file) { return new Promise((resolve) => { const reader = new FileReader(); reader.onload = (e) => resolve(e.target.result); reader.readAsDataURL(file); }); }
+    window.simpanPengaturanToko = async function(e) {
+        e.preventDefault();
+        configToko.nama = document.getElementById('inputNamaToko').value.trim(); configToko.alamat = document.getElementById('inputAlamatToko').value.trim(); configToko.telepon = document.getElementById('inputTeleponToko').value.trim();
+        configToko.pesanBawah = document.getElementById('inputPesanBawah1').value.trim(); configToko.pesanBawah2 = document.getElementById('inputPesanBawah2').value.trim(); configToko.pesanBawah3 = document.getElementById('inputPesanBawah3').value.trim();
+        configToko.ig = document.getElementById('inputIg').value.trim(); configToko.fb = document.getElementById('inputFb').value.trim(); configToko.tiktok = document.getElementById('inputTiktok').value.trim();
+        const fileAplikasi = document.getElementById('inputLogoAplikasi').files[0]; const fileStruk = document.getElementById('inputLogoStruk').files[0]; const fileQris = document.getElementById('inputQrisToko').files[0];
+        if (fileAplikasi) configToko.logoAplikasi = await bacaFileGambar(fileAplikasi); if (fileStruk) configToko.logoStruk = await bacaFileGambar(fileStruk); if (fileQris) configToko.qris = await bacaFileGambar(fileQris);
+        localStorage.setItem('lokalcaffee_config', JSON.stringify(configToko)); terapkanConfigToko(); alert("Toko Diperbarui!");
+    };
+
+    window.prosesLogin = function(e) {
+        e.preventDefault();
+        const inputId = document.getElementById('inputId').value.trim().toLowerCase(); const inputPin = document.getElementById('inputPin').value;
+        const akunValid = dataPengguna.find(user => user.id === inputId && user.pass === inputPin);
+        if(akunValid) {
+            kasirAktif = akunValid.nama || akunValid.id || "Utama"; peranAktif = akunValid.peran || "kasir";
+            document.getElementById('namaKasirAktif').innerText = "👤 " + kasirAktif;
+            if(peranAktif === "admin") { document.getElementById('btnAturAkun').classList.remove('d-none'); renderTabelAkun(); } else { document.getElementById('btnAturAkun').classList.add('d-none'); }
+            document.getElementById('halamanLogin').style.display = "none"; document.getElementById('halamanKasirUtama').style.display = "block";
+            document.getElementById('inputId').value = ""; document.getElementById('inputPin').value = ""; document.getElementById('pesanErrorLogin').classList.add('d-none');
+            terapkanConfigToko(); perbaruiTampilan(); 
+        } else { document.getElementById('pesanErrorLogin').classList.remove('d-none'); document.getElementById('inputPin').value = ""; }
+    };
+    window.keluarKasir = function() { if(confirm("Kunci layar kasir?")) { document.getElementById('halamanKasirUtama').style.display = "none"; document.getElementById('halamanLogin').style.display = "flex"; } };
+    function renderTabelAkun() {
+        const tbody = document.getElementById('tabelDaftarAkun'); tbody.innerHTML = '';
+        dataPengguna.forEach((user, index) => {
+            const tr = document.createElement('tr'); let tombolHapus = (user.id === 'admin') ? `<span class="badge bg-secondary">Terkunci</span>` : `<button class="btn btn-sm btn-outline-danger py-0 px-2 mt-1" onclick="hapusAkun(${index})">Hapus</button>`;
+            tr.innerHTML = `<td class="fw-bold">${user.id}</td><td>${user.nama}</td><td style="font-family: monospace;">${user.pass}</td><td><div class="d-flex justify-content-center gap-1"><button class="btn btn-sm btn-outline-primary py-0 px-2 mt-1" onclick="ubahPassword(${index})">Ubah PIN</button>${tombolHapus}</div></td>`;
+            tbody.appendChild(tr);
+        });
+    }
+    window.tambahAkunBaru = function(e) { e.preventDefault(); const idBaru = document.getElementById('idBaru').value.trim().toLowerCase(); const namaBaru = document.getElementById('namaBaru').value.trim(); const passBaru = document.getElementById('passBaru').value.trim(); if(dataPengguna.find(u => u.id === idBaru)) return alert("ID sudah ada!"); dataPengguna.push({ id: idBaru, pass: passBaru, nama: namaBaru, peran: "kasir" }); localStorage.setItem('lokalcaffee_users', JSON.stringify(dataPengguna)); document.getElementById('formTambahAkun').reset(); renderTabelAkun(); alert("Akun berhasil ditambahkan!"); };
+    window.hapusAkun = function(index) { if(confirm(`Hapus akun "${dataPengguna[index].nama}"?`)) { dataPengguna.splice(index, 1); localStorage.setItem('lokalcaffee_users', JSON.stringify(dataPengguna)); renderTabelAkun(); } };
+    window.ubahPassword = function(index) { const pinBaru = prompt("PIN baru untuk " + dataPengguna[index].nama + ":"); if (pinBaru !== null && pinBaru.trim() !== "") { dataPengguna[index].pass = pinBaru.trim(); localStorage.setItem('lokalcaffee_users', JSON.stringify(dataPengguna)); renderTabelAkun(); alert("PIN diperbarui!"); } };
+
+    function terapkanConfigToko() {
+        document.getElementById('loginTitle').innerText = configToko.nama; document.title = "Kasir " + configToko.nama; 
+        document.getElementById('inputNamaToko').value = configToko.nama; document.getElementById('inputAlamatToko').value = configToko.alamat || ""; document.getElementById('inputTeleponToko').value = configToko.telepon || "";
+        document.getElementById('inputPesanBawah1').value = configToko.pesanBawah || ""; document.getElementById('inputPesanBawah2').value = configToko.pesanBawah2 || ""; document.getElementById('inputPesanBawah3').value = configToko.pesanBawah3 || "";
+        document.getElementById('inputIg').value = configToko.ig || ""; document.getElementById('inputFb').value = configToko.fb || ""; document.getElementById('inputTiktok').value = configToko.tiktok || "";
+        const headerLogo = configToko.logoAplikasi ? `<img src="${configToko.logoAplikasi}" style="height:30px; width:30px; border-radius:50%; object-fit:cover; margin-right:10px;">` : `☕ `;
+        document.getElementById('headerTitle').innerHTML = headerLogo + configToko.nama;
+        const loginLogoEl = document.getElementById('loginLogo'); if (configToko.logoAplikasi) { loginLogoEl.src = configToko.logoAplikasi; loginLogoEl.classList.remove('d-none'); } else { loginLogoEl.classList.add('d-none'); }
+        const qrisContainer = document.getElementById('qrisImageContainer'); if(configToko.qris) { qrisContainer.innerHTML = `<img src="${configToko.qris}" class="qris-img-render" alt="QRIS">`; } else { qrisContainer.innerHTML = `<p class="small text-danger my-2">⚠️ Gambar QRIS Belum Diatur</p>`; }
     }
 
-    function pemicuCetakLangsung(idx) { eksekusiCetakPWA(riwayatPenjualan[idx]); }
-
+    // BOOT APLIKASI
     terapkanConfigToko();
-    gantiModeGudang();
 </script>
 </body>
 </html>
